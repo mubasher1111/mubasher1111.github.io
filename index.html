@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Muhammad Mubasher: Excel VBA and Power Query automation, and WooCommerce development. Projects, screenshots, demo videos and results.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Muhammad Mubasher | Excel Automation & WooCommerce Developer">
+<meta property="og:description" content="13 projects: bank-to-NetSuite automation, reconciliation, dashboards, and a WooCommerce store with a print-on-demand studio.">
+<meta property="og:image" content="a/share-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2317724a'/%3E%3Ctext x='32' y='43' font-family='Arial' font-weight='700' font-size='30' text-anchor='middle' fill='white'%3EMM%3C/text%3E%3C/svg%3E">
+<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}html{scroll-behavior:smooth}section[id]{scroll-margin-top:64px}</style><title>Muhammad Mubasher | Excel Automation & WooCommerce Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working spreadsheet. Sections are addressed like cells (A1, B1...), a faint grid sits under the page,
+   case-study media sits in browser frames. One accent (ledger green) for Excel work, one (kiln amber) for web work. */
+:root{
+  --bg:#f6f8f7; --paper:#ffffff; --ink:#14201b; --muted:#56655e; --line:#dbe3df; --grid:rgba(20,32,27,.045);
+  --green:#17724a; --green-soft:#e3f1ea; --amber:#b95511; --amber-soft:#fbeee3; --chip:#eef2f0;
+  --shadow:0 1px 2px rgba(20,32,27,.06),0 8px 24px rgba(20,32,27,.06);
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1412; --paper:#151d1a; --ink:#e7eeea; --muted:#9aaba3; --line:#26322d; --grid:rgba(231,238,234,.035);
+  --green:#4cc38a; --green-soft:#16302a; --amber:#f0a062; --amber-soft:#33241a; --chip:#1c2622;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1412; --paper:#151d1a; --ink:#e7eeea; --muted:#9aaba3; --line:#26322d; --grid:rgba(231,238,234,.035);
+  --green:#4cc38a; --green-soft:#16302a; --amber:#f0a062; --amber-soft:#33241a; --chip:#1c2622;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:96px 28px; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
+p{margin:0}
+.mono{font-family:var(--f-mono)}
+.cell{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);background:var(--paper);
+  padding:2px 8px;border-radius:3px;display:inline-block}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+.bar .wrap{display:flex;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
+.bar .name{font-family:var(--f-display);font-weight:700;font-size:17px;margin-right:auto}
+.bar nav{display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-size:14px;text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:6px}
+.bar nav a:hover{color:var(--ink);background:var(--chip)}
+
+/* hero */
+.hero{padding-block:56px 40px;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end}
+.hero h1{font-size:clamp(38px,6vw,68px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero h1 .w{color:var(--amber)}
+.hero .lead{margin-top:18px;font-size:18px;color:var(--muted);max-width:56ch}
+.hero .who{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.chip{font-size:13px;background:var(--chip);border:1px solid var(--line);padding:4px 10px;border-radius:999px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.sheet table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.sheet th,.sheet td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+.sheet thead th{font-family:var(--f-mono);font-size:11px;font-weight:500;color:var(--muted);background:var(--chip);letter-spacing:.06em}
+.sheet td.n{font-family:var(--f-display);font-weight:700;font-size:26px;white-space:nowrap}
+.sheet td.n.g{color:var(--green)} .sheet td.n.a{color:var(--amber)}
+.sheet td.l{font-size:14px;color:var(--muted)}
+.sheet tr:last-child td{border-bottom:0}
+.sheet .rh{width:34px;font-family:var(--f-mono);font-size:11px;color:var(--muted);background:var(--chip);text-align:center}
+
+/* sections */
+section.block{padding-block:56px;border-top:1px solid var(--line)}
+.shead{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:baseline;margin-bottom:28px}
+.shead h2{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.01em}
+.shead p{grid-column:2;color:var(--muted);max-width:68ch}
+.tag-web{color:var(--amber)} .tag-xl{color:var(--green)}
+
+/* case study */
+.case-top{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px}
+.case-top .copy{display:grid;gap:14px;align-content:start;min-width:0}
+.case-top .copy p{color:var(--muted)}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;text-decoration:none;padding:9px 14px;border-radius:7px;border:1px solid var(--line);background:var(--paper)}
+.btn.primary{background:var(--amber);border-color:var(--amber);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#1a0f06}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#1a0f06}}
+.btn:hover{filter:brightness(1.05)}
+.scope{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.scope div{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:12px 14px;min-width:0}
+.scope b{display:block;font-size:14px}
+.scope span{font-size:13px;color:var(--muted)}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{font:inherit;font-size:14px;padding:7px 12px;border-radius:7px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.browser{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+.browser .chrome{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--chip)}
+.dots{display:flex;gap:5px} .dots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block}
+.url{flex:1;min-width:0;font-family:var(--f-mono);font-size:12px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:3px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.browser img{display:block;width:100%;height:auto;cursor:zoom-in}
+.caption{padding:12px 16px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+.caption b{color:var(--ink)}
+
+.phones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px}
+.phone{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:8px;box-shadow:var(--shadow);min-width:0}
+.phone img{border-radius:15px;display:block;width:100%;height:auto;cursor:zoom-in}
+.phone p{font-size:12px;color:var(--muted);text-align:center;padding:8px 4px 2px}
+
+.built{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:32px}
+.built article{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px;min-width:0}
+.built h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.built ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:grid;gap:4px}
+
+.results{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;margin-top:32px}
+.chart{padding:18px}
+.chart h3{font-size:18px;margin-bottom:4px}
+.chart .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.barrow{display:grid;grid-template-columns:110px 1fr 70px;gap:10px;align-items:center;margin-bottom:10px;font-size:13px}
+.track{height:22px;background:var(--chip);border-radius:4px;overflow:hidden}
+.fill{height:100%;border-radius:4px}
+.fill.before{background:var(--line)} .fill.after{background:var(--amber)}
+.barrow .v{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.techpack{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;margin-top:20px;align-items:start}
+
+/* excel projects */
+.proj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card .media{background:#000;aspect-ratio:16/9;max-width:100%}
+.card .media video,.card .media img{width:100%;height:100%;object-fit:contain;display:block}
+.card .media.shot{background:var(--chip);border-bottom:1px solid var(--line)}
+.card .media.shot img{object-fit:cover;object-position:left top;cursor:zoom-in}
+.card .media.none{background:var(--green-soft);display:grid;place-items:center;padding:20px;text-align:center}
+.card .media.none .big{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,5vw,44px);color:var(--green);line-height:1}
+.card .media.none small{display:block;margin-top:8px;font-size:13px;color:var(--muted)}
+.card .body{padding:18px;display:grid;gap:10px}
+.card h3{font-size:20px;font-weight:700}
+.card .ctx{font-size:13px;color:var(--muted)}
+.pse{display:grid;gap:6px;font-size:14px}
+.pse div{display:grid;grid-template-columns:78px 1fr;gap:8px}
+.pse dt{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--green);padding-top:3px}
+.pse dd{margin:0;color:var(--ink)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags span{font-family:var(--f-mono);font-size:11px;background:var(--green-soft);color:var(--green);padding:3px 8px;border-radius:4px}
+.tags.w span{background:var(--amber-soft);color:var(--amber)}
+
+.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.mini article{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.mini h3{font-size:16px;margin-bottom:6px}
+.mini p{font-size:14px;color:var(--muted)}
+
+.tips{display:grid;grid-template-columns:repeat(2,minmax(0,240px)) 1fr;gap:18px;align-items:start}
+.tips video{width:100%;aspect-ratio:9/16;max-width:100%;background:#000;border-radius:12px;display:block}
+.tips p.t{font-size:13px;color:var(--muted);margin-top:6px}
+
+.how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.how div{border-top:3px solid var(--green);background:var(--paper);padding:16px;border-radius:0 0 8px 8px;min-width:0}
+.how b{display:block;margin-bottom:6px}
+.how span{font-size:14px;color:var(--muted)}
+
+.contact{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+.contact h2{font-size:clamp(28px,4vw,42px);font-weight:800}
+.contact p{color:var(--muted);margin-top:10px;max-width:52ch}
+.cbox{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px}
+.crow{display:grid;grid-template-columns:80px 1fr auto;gap:10px;align-items:center;font-size:14px}
+.crow .k{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.crow .v{user-select:all;overflow-wrap:anywhere;min-width:0}
+.copy{font:inherit;font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+footer{padding-block:28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);margin-top:56px}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(8,12,10,.86);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+.lb img{max-width:min(1400px,100%);height:auto;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lb button{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));font:inherit;font-size:14px;padding:8px 14px;border-radius:7px;border:0;background:#fff;color:#111;cursor:pointer}
+
+@media (max-width:900px){
+  .hero,.case-top,.results,.split,.techpack,.contact{grid-template-columns:1fr}
+  .built,.mini,.how{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phones{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tips{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tips .tipcopy{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .proj,.built,.mini,.how,.scope{grid-template-columns:1fr}
+  .shead{grid-template-columns:1fr} .shead p{grid-column:1}
+  .bar nav{display:none}
+  .barrow{grid-template-columns:84px 1fr 56px}
+  .crow{grid-template-columns:1fr auto} .crow .k{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:no-preference){ .browser img{transition:opacity .2s} }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <span class="name">Muhammad Mubasher</span>
+    <nav aria-label="Sections">
+      <a href="#web">Web</a><a href="#excel">Excel tools</a><a href="#how">How I work</a><a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <span class="cell">A1 · Portfolio</span>
+      <h1 style="margin-top:14px">Business tools that turn hours of manual work into <em>one click</em> and <span class="w">one store</span>.</h1>
+      <p class="lead">I build Excel automation (VBA, Power Query, dynamic formulas) for finance and operations teams, and custom WooCommerce stores that track, sell and report on their own. Then I connect the two.</p>
+      <div class="who">
+        <span class="chip">Lahore, Pakistan · Remote</span>
+        <span class="chip">Excel VBA &amp; Power Query</span>
+        <span class="chip">WooCommerce &amp; PHP</span>
+        <span class="chip">Technical SEO</span>
+      </div>
+    </div>
+    <div class="sheet" role="region" aria-label="Results at a glance">
+      <table>
+        <thead><tr><th class="rh"></th><th>RESULT</th><th>WHAT IT MEANS</th></tr></thead>
+        <tbody>
+          <tr><td class="rh">1</td><td class="n a">5×</td><td class="l">Google impressions on blazegarments.com in 28 days (1,059 → 5,327)</td></tr>
+          <tr><td class="rh">2</td><td class="n a">0.1 s</td><td class="l">Cached page load, down from 1–4 s</td></tr>
+          <tr><td class="rh">3</td><td class="n g">0.00</td><td class="l">Debit minus credit on every journal export from the Bank Fees Tool</td></tr>
+          <tr><td class="rh">4</td><td class="n g">504</td><td class="l">NetSuite accounts mapped automatically, with Internal IDs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WEB CASE STUDY -->
+  <section class="block" id="web">
+    <div class="shead">
+      <span class="cell tag-web">B1 · Web</span>
+      <h2>Blaze Garments: one store, every way to sell</h2>
+      <p>A clothing manufacturer in Lahore sells retail to shoppers, wholesale to boutiques, private label to brands, and custom printed bulk orders. I designed and built the whole site on WooCommerce with a custom theme and custom plugins, then added tracking, SEO and an Excel reporting tool on top.</p>
+    </div>
+
+    <div class="case-top">
+      <div class="copy">
+        <p>Most garment sites pick one audience. This one serves four from one catalogue, with a separate path for each: a normal cart for retail, MOQ-based wholesale with an inquiry bag, a private-label service, and a print-on-demand studio that ends in a factory-ready tech pack.</p>
+        <div class="links">
+          <a class="btn primary" href="https://blazegarments.com/" target="_blank" rel="noopener">Visit the live site ↗</a>
+          <a class="btn" href="https://blazegarments.com/print-on-demand/" target="_blank" rel="noopener">Try the POD studio ↗</a>
+        </div>
+      </div>
+      <div class="scope">
+        <div><b>B2C retail</b><span>Shop, product variants, colour swatches, wishlist, COD checkout, multi-currency</span></div>
+        <div><b>B2B wholesale</b><span>Tiered MOQ pricing, wholesale catalogue, inquiry bag, bulk quote flow</span></div>
+        <div><b>Private label</b><span>Service pages, guides, size charts, quote requests</span></div>
+        <div><b>Print on demand</b><span>Browser designer on real garment photos, auto tech pack PDF</span></div>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Site pages">
+      <button role="tab" aria-selected="true" data-shot="0" id="tab0">Home</button>
+      <button role="tab" aria-selected="false" data-shot="1" id="tab1">Retail shop</button>
+      <button role="tab" aria-selected="false" data-shot="2" id="tab2">Product page</button>
+      <button role="tab" aria-selected="false" data-shot="3" id="tab3">Wholesale B2B</button>
+      <button role="tab" aria-selected="false" data-shot="4" id="tab4">Private label</button>
+      <button role="tab" aria-selected="false" data-shot="5" id="tab5">Blog &amp; guides</button>
+    </div>
+    <figure class="browser" style="margin:0">
+      <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="shotUrl">blazegarments.com/</span></div>
+      <img id="shotImg" src="a/blaze-home.jpg" alt="Blaze Garments home page" width="1200" height="750">
+      <figcaption class="caption" id="shotCap"><b>Home.</b> B2B-first hero with live MOQ, sampling time and a WhatsApp quote button that stays on screen.</figcaption>
+    </figure>
+
+    <div class="phones">
+      <div class="phone"><img src="a/blaze-home-m.jpg" alt="Home page on a phone" loading="lazy"><p>Home on mobile</p></div>
+      <div class="phone"><img src="a/blaze-product-m.jpg" alt="Product page on a phone with sticky buy bar" loading="lazy"><p>Product page, sticky buy bar</p></div>
+      <div class="phone"><img src="a/blaze-cat-m.jpg" alt="Winter collection category on a phone" loading="lazy"><p>Winter collection</p></div>
+      <div class="phone"><img src="a/pod-products-m.jpg" alt="Print on demand product grid on a phone" loading="lazy"><p>POD studio on mobile</p></div>
+    </div>
+
+    <h3 style="font-size:26px;margin-top:48px">Print-on-demand studio</h3>
+    <p style="color:var(--muted);max-width:70ch;margin-top:8px">A buyer picks a blank (12 garments for men, women and kids), a quantity tier, fabric, colour, sizes and label, then places artwork anywhere on the real garment photo, sleeves included. The studio measures print size in inches, warns when artwork leaves the print area, and builds a tech pack PDF with mockups, flats, placements and a measurement chart. The inquiry and all files go straight to the factory team.</p>
+    <div class="split">
+      <figure class="browser" style="margin:0">
+        <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url">blazegarments.com/print-on-demand/#pod/bulk</span></div>
+        <img src="a/pod-products.jpg" alt="Bulk order product grid with MOQ badges" loading="lazy">
+        <figcaption class="caption"><b>Step 1.</b> Choose a blank. Every card shows fabric and MOQ.</figcaption>
+      </figure>
+      <figure class="browser" style="margin:0">
+        <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url">…/#pod/bulk/pullover-hoodie</span></div>
+        <img src="a/pod-options.jpg" alt="Quantity tier, fabric and colour steps for a pullover hoodie" loading="lazy">
+        <figcaption class="caption"><b>Step 2.</b> Quantity tier first (50 / 100 / 200 / 500+), then fabric, colour and sizes.</figcaption>
+      </figure>
+    </div>
+    <div class="techpack">
+      <figure class="browser" style="margin:0">
+        <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url">tech-pack.pdf · generated in the browser</span></div>
+        <img src="a/techpack.jpg" alt="Generated tech pack page with front, back and sleeve placements" loading="lazy">
+        <figcaption class="caption"><b>Output.</b> Tech pack page 1: front, back and sleeve placements on the chosen colour. Later pages add flats with dimension lines and the size chart.</figcaption>
+      </figure>
+      <figure class="browser" style="margin:0">
+        <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url">12 blank garments</span></div>
+        <img src="a/pod-mockups.jpg" alt="Contact sheet of the 12 blank garments" loading="lazy">
+        <figcaption class="caption"><b>Catalogue.</b> 12 blanks, each cut into front, back and side views and tinted to 12 stock colours.</figcaption>
+      </figure>
+    </div>
+
+    <div class="results">
+      <div class="sheet chart">
+        <h3>SEO: what changed in 28 days</h3>
+        <p class="sub">Google Search Console, last 28 days vs the 28 days before, after technical SEO and internal-linking work.</p>
+        <div class="barrow"><span>Impressions</span><div class="track"><div class="fill before" style="width:19.9%"></div></div><span class="v">1,059</span></div>
+        <div class="barrow"><span></span><div class="track"><div class="fill after" style="width:100%"></div></div><span class="v">5,327</span></div>
+        <div class="barrow" style="margin-top:16px"><span>Clicks</span><div class="track"><div class="fill before" style="width:73.5%"></div></div><span class="v">36</span></div>
+        <div class="barrow"><span></span><div class="track"><div class="fill after" style="width:100%"></div></div><span class="v">49</span></div>
+        <p class="note">Grey = previous 28 days · Amber = latest 28 days. Each pair is scaled to its own larger value.</p>
+      </div>
+      <div class="sheet" role="region" aria-label="Internal links before and after">
+        <table>
+          <thead><tr><th>PAGE</th><th>INCOMING LINKS BEFORE</th><th>AFTER</th></tr></thead>
+          <tbody>
+            <tr><td>Print on Demand</td><td class="mono">0</td><td class="mono" style="color:var(--amber);font-weight:500">68</td></tr>
+            <tr><td>Private Label</td><td class="mono">43</td><td class="mono" style="color:var(--amber);font-weight:500">67</td></tr>
+            <tr><td>About</td><td class="mono">0</td><td class="mono" style="color:var(--amber);font-weight:500">18</td></tr>
+            <tr><td>Product categories</td><td class="mono">0–5</td><td class="mono" style="color:var(--amber);font-weight:500">5–12 each</td></tr>
+          </tbody>
+        </table>
+        <p class="caption" style="border-top:1px solid var(--line)">Also: 85 image ALT texts filled, cart and checkout set to noindex, FAQ schema, Rank Math titles rewritten for click-through, 6 category descriptions and new buying guides.</p>
+      </div>
+    </div>
+
+    <div class="built">
+      <article>
+        <h3>Custom code</h3>
+        <ul>
+          <li>Custom theme and a central "Control" plugin: shop, product, cart, wishlist, order status</li>
+          <li>Wholesale manager, inquiry bag and inquiry manager</li>
+          <li>Size charts, FAQ schema, internal-link engine</li>
+          <li>AJAX add-to-cart with no page reload (0.6 s)</li>
+        </ul>
+      </article>
+      <article>
+        <h3>Tracking &amp; reporting</h3>
+        <ul>
+          <li>GA4 e-commerce events: view, add to cart, checkout, purchase, WhatsApp click</li>
+          <li>Microsoft Clarity recordings and heatmaps, Meta Pixel</li>
+          <li>First-party visitor log with no IPs stored</li>
+          <li><b>Excel manager:</b> orders, products, Search Console and GA4 data refresh into one dashboard every day</li>
+        </ul>
+      </article>
+      <article>
+        <h3>Speed &amp; reliability</h3>
+        <ul>
+          <li>Cache fix so the CDN never shows a page in another visitor's currency</li>
+          <li>Cached pages 0.03–0.13 s instead of 1–4 s</li>
+          <li>Hero images compressed 88–91%, LCP preload</li>
+          <li>Staging first, backup before every change, checksum-verified deploys</li>
+        </ul>
+      </article>
+    </div>
+    <div class="tags w" style="margin-top:18px"><span>WooCommerce</span><span>WordPress</span><span>PHP</span><span>JavaScript</span><span>Fabric.js</span><span>jsPDF</span><span>GA4</span><span>Search Console API</span><span>Rank Math</span><span>LiteSpeed</span><span>Excel VBA</span></div>
+  </section>
+
+  <!-- EXCEL -->
+  <section class="block" id="excel">
+    <div class="shead">
+      <span class="cell tag-xl">C1 · Excel</span>
+      <h2>Excel tools clients use every month</h2>
+      <p>Each tool ships with yellow input cells, buttons for every step, built-in checks that show errors before they cost money, a Read Me sheet and a short video guide. Client names and data are kept private; full walkthroughs are available on request.</p>
+    </div>
+
+    <div class="proj">
+      <article class="card">
+        <div class="media shot"><img src="a/bank-readme.jpg" alt="Bank Fees Tool Read Me sheet with the monthly routine" loading="lazy"></div>
+        <div class="body">
+          <h3>Bank Fees Tool</h3>
+          <p class="ctx">US multi-location parking company · 5 versions delivered · repeat client</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Bank fees for 9+ locations were sorted by hand and typed into NetSuite every month.</dd></div>
+            <div><dt>BUILT</dt><dd>Import the bank statement, press Refresh, export a NetSuite-ready journal CSV. Fee rules and 504 accounts map automatically, Internal IDs included. Re-importing skips duplicates.</dd></div>
+            <div><dt>RESULT</dt><dd>A monthly job in four clicks. A check panel proves debit minus credit = 0.00 and flags any unmapped account.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel VBA</span><span>NetSuite</span><span>Bank reconciliation</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media none"><div><span class="big">Budget → PO</span><small>Demo video available on request</small></div></div>
+        <div class="body">
+          <h3>Event Stock Planner</h3>
+          <p class="ctx">Mobile bar company · versions 1.0 to 1.06</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Stock for each event was planned by hand from recipe and kit lists.</dd></div>
+            <div><dt>BUILT</dt><dd>Enter event type, guests, budget, duration and temperature; get the purchase order, stock pick list, ice and glassware plan. New event and pack types are added as table rows.</dd></div>
+            <div><dt>RESULT</dt><dd>A full purchase order in seconds, 0 formula errors, no hidden manual steps.</dd></div>
+          </dl>
+          <div class="tags"><span>LET</span><span>XLOOKUP</span><span>FILTER</span><span>MAP</span><span>VSTACK</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media none"><div><span class="big">Adyen + bank</span><small>Matched by location with Power Query</small></div></div>
+        <div class="body">
+          <h3>Payment Reconciliation Checklist</h3>
+          <p class="ctx">Same US client · Adyen, Parkchirp and bank data</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Three payment sources had to be matched line by line for every location.</dd></div>
+            <div><dt>BUILT</dt><dd>Power Query cleans each source and matches transactions by location and date. Mismatches are flagged with the reason.</dd></div>
+            <div><dt>RESULT</dt><dd>One refresh shows what is matched and what needs review, plus an analytics dashboard.</dd></div>
+          </dl>
+          <div class="tags"><span>Power Query</span><span>Reconciliation</span><span>Dashboard</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media none"><div><span class="big">Add · Search · Print</span><small>Demo video available on request</small></div></div>
+        <div class="body">
+          <h3>Holiday Owners Records</h3>
+          <p class="ctx">Holiday property company · VBA entry form</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Owner, key code and safety-equipment records lived in a long, hard-to-search sheet.</dd></div>
+            <div><dt>BUILT</dt><dd>Add and clear form, instant search by name, property, owner or month, a monthly summary chart and a one-click print list.</dd></div>
+            <div><dt>RESULT</dt><dd>Records added and found in seconds, printed lists always current.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel VBA</span><span>Data entry</span><span>Search</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/msp-before-after.jpg" alt="SWIFT milestone timeline before and after the FY2027 roll-forward" loading="lazy"></div>
+        <div class="body">
+          <h3>MS Project FY2027 Roll-Forward</h3>
+          <p class="ctx">Water-funding agency · 7 programmes · 3 deliveries</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>The master plan and 7 programme schedules (SWIFT, FIF, DWSRF, CWSRF, EDAP, SRF-EC, SRF-LSLR) had to move to the new fiscal year, matching an Excel list of dates.</dd></div>
+            <div><dt>BUILT</dt><dd>Updated every cycle file, merged them into one master .mpp, added 40 missing rows, moved end-before-start dates and rebuilt summary rows. Before/after screenshots for every timeline.</dd></div>
+            <div><dt>RESULT</dt><dd>One master plan for FY2027 and a change log in Excel recording every edit.</dd></div>
+          </dl>
+          <div class="tags"><span>Microsoft Project</span><span>Scheduling</span><span>Change log</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/lcc-dashboard.jpg" alt="Lead Command Center dashboard with buttons, settings and pipeline" loading="lazy"></div>
+        <div class="body">
+          <h3>Lead Command Center</h3>
+          <p class="ctx">Email outreach CRM built in Excel and VBA</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Leads, follow-ups and sent emails were tracked in scattered lists.</dd></div>
+            <div><dt>BUILT</dt><dd>Import leads, start today's batch, draft personalised emails in Outlook, then sync sent mail and replies back. Daily send limit, follow-up timing and a pipeline chart.</dd></div>
+            <div><dt>RESULT</dt><dd>A daily routine of four buttons with a live view of new, contacted, replied and won leads.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel VBA</span><span>Outlook automation</span><span>CRM</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/ice-guide.jpg" alt="Ice Request Calendar delivery notes describing the automation" loading="lazy"></div>
+        <div class="body">
+          <h3>Ice Rink Booking Calendar</h3>
+          <p class="ctx">Arena bookings · 5 arenas · requested vs approved</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Season booking requests from clubs and schools had to be placed on 10 arena calendars, and double bookings were hard to spot.</dd></div>
+            <div><dt>BUILT</dt><dd>One master list now fills every arena calendar in half-hour slots. Any overlap shows CONFLICT in red, with a conflict count on each request row.</dd></div>
+            <div><dt>RESULT</dt><dd>Staff edit one list; all calendars update and clashes are visible at once.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel formulas</span><span>Scheduling</span><span>Conditional formatting</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/transport.jpg" alt="Road transport document for UN Class 1 fireworks with automatic totals" loading="lazy"></div>
+        <div class="body">
+          <h3>Fireworks Shipping Manifest</h3>
+          <p class="ctx">UK fireworks distributor · dangerous-goods paperwork</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Each shipment needed a manifest and a road transport document with UN numbers, hazard classes and net explosive quantity, worked out by hand from many supplier lists.</dd></div>
+            <div><dt>BUILT</dt><dd>Enter quantities on the supplier sheets; the manifest groups items by UN number and the transport document totals NEQ per class, cases and whether an ADR driver is needed.</dd></div>
+            <div><dt>RESULT</dt><dd>Compliant paperwork in minutes instead of manual sums.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel formulas</span><span>Logistics</span><span>Compliance</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/action-plan.jpg" alt="Actual vs forecast table by month" loading="lazy"></div>
+        <div class="body">
+          <h3>Action Plan &amp; Targets</h3>
+          <p class="ctx">UK pawn and retail business · 12-month plan</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Monthly targets, actual results and breakeven were kept in separate files.</dd></div>
+            <div><dt>BUILT</dt><dd>One workbook with a targets sheet and a results sheet for every month, feeding actual vs forecast, margin vs target, breakeven and online sales.</dd></div>
+            <div><dt>RESULT</dt><dd>Variance for every line, every month, on one page.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel</span><span>Forecasting</span><span>KPI reporting</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/igcse.jpg" alt="Exam analysis summary with credit, pass and fail percentages" loading="lazy"></div>
+        <div class="body">
+          <h3>Exam Item Analysis Report</h3>
+          <p class="ctx">School maths department · IGCSE Year 11</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>Teachers needed credit, pass and fail rates and weak topics from two mock exams, per class.</dd></div>
+            <div><dt>BUILT</dt><dd>Paper-level mark sheets feed an item analysis per question and a report comparing the two exams, with weak topics and actions per class.</dd></div>
+            <div><dt>RESULT</dt><dd>A ready report for the department meeting, refreshed when marks change.</dd></div>
+          </dl>
+          <div class="tags"><span>Excel</span><span>Education data</span><span>Reporting</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media shot"><img src="a/sugrbean.jpg" alt="A to Z picture links index page" loading="lazy"></div>
+        <div class="body">
+          <h3>Website Index Rebuild</h3>
+          <p class="ctx">Long-running hobby website · hundreds of gallery pages</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>PROBLEM</dt><dd>The site's index was a long plain list of galleries, and some "next page" links inside galleries were broken.</dd></div>
+            <div><dt>BUILT</dt><dd>A Python script crawled every gallery chain, fixed the broken ones, and generated a new A–Z index page with a jump bar, page counts and direct links to every page.</dd></div>
+            <div><dt>RESULT</dt><dd>Every gallery page reachable from one clean table.</dd></div>
+          </dl>
+          <div class="tags w"><span>Python</span><span>HTML/CSS</span><span>Web crawling</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="media none"><div><span class="big">MS Access</span><small>Database application</small></div></div>
+        <div class="body">
+          <h3>Care Management Database</h3>
+          <p class="ctx">Palliative care service</p>
+          <dl class="pse" style="margin:0">
+            <div><dt>BUILT</dt><dd>A Microsoft Access database application for managing the care service's records.</dd></div>
+          </dl>
+          <div class="tags"><span>MS Access</span><span>Database design</span><span>Forms</span></div>
+        </div>
+      </article>
+    </div>
+
+    <h3 style="font-size:22px;margin-top:44px;margin-bottom:14px">Quick Excel tips I share</h3>
+    <div class="tips">
+      <div><video controls preload="metadata" poster="a/tip-numbering-poster.jpg" src="a/tip-numbering.mp4" aria-label="Excel tip: auto numbering without dragging"></video><p class="t">Auto numbering without dragging</p></div>
+      <div><video controls preload="metadata" poster="a/tip-dropdown-poster.jpg" src="a/tip-dropdown.mp4" aria-label="Excel tip: stop typing the same names"></video><p class="t">Stop typing the same names again</p></div>
+      <div class="tipcopy" style="color:var(--muted);font-size:15px;max-width:42ch">Short vertical tips for LinkedIn and Facebook. I also make <b style="color:var(--ink)">AI Zero to Hero</b>, an Urdu video series that teaches AI tools from scratch.</div>
+    </div>
+  </section>
+
+  <!-- HOW I WORK -->
+  <section class="block" id="how">
+    <div class="shead">
+      <span class="cell">D1 · Process</span>
+      <h2>How I work</h2>
+    </div>
+    <div class="how">
+      <div><b>1. Look at your file first</b><span>Send the workbook or store link. I reply with how I'd automate it before you pay anything.</span></div>
+      <div><b>2. Fixed scope and quote</b><span>Each phase has its own scope, timeline and price, agreed before work starts.</span></div>
+      <div><b>3. Build safely</b><span>Staging copies, backups and built-in checks. Nothing goes live without your yes.</span></div>
+      <div><b>4. Hand over properly</b><span>Read Me sheet, short video guide, and free fixes on delivered work.</span></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="block contact" id="contact">
+    <div>
+      <span class="cell">E1 · Contact</span>
+      <h2 style="margin-top:12px">Have a process that eats your week?</h2>
+      <p>Send your Excel file or store link and one line about what takes the most time.</p>
+    </div>
+    <div class="cbox">
+      <div class="crow"><span class="k">EMAIL</span><span class="v" id="em">mubasherhanif44@gmail.com</span><button class="copy" data-copy="em" type="button">Copy</button></div>
+      <div class="crow"><span class="k">LINKEDIN</span><a class="v" href="https://www.linkedin.com/in/mmubasher000" target="_blank" rel="noopener">linkedin.com/in/mmubasher000</a><span></span></div>
+      <div class="crow"><span class="k">BASED IN</span><span class="v">Lahore, Pakistan · works remotely</span><span></span></div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Muhammad Mubasher · Excel automation &amp; WooCommerce development</div></footer>
+
+<div class="lb" id="lb" hidden><button type="button" id="lbClose">Close</button><img id="lbImg" alt=""></div>
+
+<script>
+(function(){
+  var shots=[
+    {src:"a/blaze-home.jpg",url:"blazegarments.com/",cap:"<b>Home.</b> B2B-first hero with live MOQ, sampling time and a WhatsApp quote button that stays on screen.",alt:"Blaze Garments home page"},
+    {src:"a/blaze-shop.jpg",url:"blazegarments.com/shop-now/",cap:"<b>Retail shop.</b> Retail catalogue with sale pricing and a currency switcher for buyers outside Pakistan.",alt:"Retail shop page"},
+    {src:"a/blaze-product.jpg",url:"blazegarments.com/product/mens-fleece-zip-jacket-colour-block/",cap:"<b>Product page.</b> Colour swatches with pre-loaded variant images, size select, AJAX add to cart and Buy Now.",alt:"Product page for a fleece jacket"},
+    {src:"a/blaze-wholesale.jpg",url:"blazegarments.com/wholesale-bulk/",cap:"<b>Wholesale B2B.</b> 50-piece MOQ, tiered volume pricing and a filterable ready-to-ship catalogue feeding the inquiry bag.",alt:"Wholesale and bulk page"},
+    {src:"a/blaze-private.jpg",url:"blazegarments.com/private-label/",cap:"<b>Private label.</b> Service page for brands, linked to guides, size charts and the POD studio.",alt:"Private label page"},
+    {src:"a/blaze-guide.jpg",url:"blazegarments.com/what-is-a-tech-pack-clothing-manufacturer-guide/",cap:"<b>Blog &amp; guides.</b> 48 blog posts, mostly B2B buying guides, with related-reading blocks and \"Ready to order?\" links into the shop.",alt:"Tech pack guide blog post"}
+  ];
+  var tabs=document.querySelectorAll('[role="tab"]'), img=document.getElementById('shotImg'),
+      url=document.getElementById('shotUrl'), cap=document.getElementById('shotCap');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      var s=shots[+t.dataset.shot];
+      tabs.forEach(function(o){o.setAttribute('aria-selected',o===t?'true':'false')});
+      img.src=s.src; img.alt=s.alt; url.textContent=s.url; cap.innerHTML=s.cap;
+    });
+  });
+  // lightbox
+  var lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg');
+  document.addEventListener('click',function(e){
+    var el=e.target;
+    if(el.tagName==='IMG' && (el.closest('.browser')||el.closest('.phone')||el.closest('.media.shot'))){
+      lbImg.src = el.src.indexOf('blaze-home.jpg')>-1 ? 'a/blaze-home-long.jpg' : el.src;
+      lbImg.alt = el.alt; lb.hidden=false; document.getElementById('lbClose').focus();
+    } else if(el===lb || el.id==='lbClose'){ lb.hidden=true; }
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') lb.hidden=true; });
+  // copy
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=document.getElementById(b.dataset.copy).textContent;
+      var done=function(){b.textContent='Copied'; setTimeout(function(){b.textContent='Copy'},1500)};
+      var sel=function(){var r=document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.copy)); var s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent='Selected';};
+      try{ navigator.clipboard.writeText(t).then(done,sel); }catch(err){ sel(); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
